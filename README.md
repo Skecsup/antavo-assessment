@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Real-time Inventory Management System
 
-## Getting Started
+## Design Choices & Implementation Strategy
 
-First, run the development server:
+### State Management
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Implemented client-side state using React's useState for immediate UI updates
+- Utilized optimistic updates for better user experience
+- Maintained separate states for items and conflicts
+- Used TypeScript for type safety and better maintainability
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Synchronization Strategy
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Implemented 1-second polling interval for real-time updates
+- Used optimistic updates with rollback capability
+- Maintained lastUpdated timestamp for version control
+- Implemented efficient delta updates to minimize data transfer
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Conflict Resolution Approach
 
-## Learn More
+The system handles concurrent modifications through:
 
-To learn more about Next.js, take a look at the following resources:
+- Real-time conflict detection using version comparison
+- Clear conflict visualization via modal interface
+- User choice between server and client versions
+- Automatic state rollback on failed updates
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Advantages
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **User Experience**
 
-## Deploy on Vercel
+   - Immediate feedback through optimistic updates
+   - Clear conflict resolution interface
+   - Minimal UI disruption
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. **Performance**
+   - Reduced server load through polling
+   - Efficient state updates
+   - Optimized network usage
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Limitations
+
+1. **Synchronization**
+
+   - 1-second polling interval may miss rapid changes
+   - Potential for brief data inconsistency
+   - Network-dependent conflict resolution
+
+2. **Scalability**
+   - Memory usage increases with item count
+   - Polling might not scale well with many clients
+   - Limited offline capabilities
+
+## Improvement Opportunities
+
+1. **Technical Enhancements**
+
+   - Implement WebSocket for real-time updates
+   - Add offline support through Service Workers
+   - Implement automatic conflict resolution for minor differences
+
+2. **User Experience**
+
+   - Add conflict prevention mechanisms
+   - Implement merge strategies for concurrent updates
+   - Add undo/redo functionality
+
+3. **Performance**
+   - Implement selective polling based on item activity
+   - Add data compression for updates
+   - Implement progressive loading for large inventories
